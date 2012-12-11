@@ -10,7 +10,7 @@ class ILikeMustaches
     # might be worth making this more sophisticated such that it can take flags or w/e
     def to_regex(regex_or_string)
       return regex_or_string if regex_or_string.kind_of? Regexp
-      Regexp.new regex_or_string
+      Regexp.new regex_or_string, Regexp::IGNORECASE
     end
 
     def match?(strings)

@@ -49,8 +49,16 @@ describe 'searching for quick notes' do
 
   specify 'it works with positive and negative matchers' do
     ILikeMustaches.new { |nc| nc.quick_note('a', 'a').quick_note('a', 'b') }
-      .quick_notes_for([ILikeMustaches::Search.new(/a/, true), ILikeMustaches::Search.new(/b/, false)])
-      .map(&:key)
-      .should == ['a']
+                  .quick_notes_for([ILikeMustaches::Search.new(/a/, true), ILikeMustaches::Search.new(/b/, false)])
+                  .map(&:key)
+                  .should == ['a']
   end
+
+  specify 'it is case insensitive' do
+    ILikeMustaches.new { |nc| nc.quick_note 'A', 'A' }
+                  .quick_notes_for([ILikeMustaches::Search.new('a', true)])
+                  .map(&:key)
+                  .should == ['A']
+  end
+
 end
