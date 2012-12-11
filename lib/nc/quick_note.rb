@@ -57,13 +57,6 @@ class Nc
       [key, value, *tags]
     end
 
-    def tags=(tags)
-      @tags = tags.map(&:to_str)
-    rescue NoMethodError
-      offender = tags.find { |tag| !tag.respond_to?(:to_str) }
-      raise ArgumentError, "QuickNote tags should respond to to_str, but `#{offender.inspect}` does not."
-    end
-
     def max_key_width
       key.each_line.map(&:size).max
     end

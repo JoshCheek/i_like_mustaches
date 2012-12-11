@@ -16,6 +16,10 @@ class Nc
     def match?(strings)
       positive == strings.any? { |string| regex === string }
     end
+
+    def ==(search)
+      positive == search.positive && regex == search.regex
+    end
   end
 end
 
