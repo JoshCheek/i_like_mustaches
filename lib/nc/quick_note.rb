@@ -15,6 +15,16 @@ class Nc
         end
       end
 
+      def max_key_width
+        notes.inject 0 do |width, note|
+          [note.max_key_width, width].max
+        end
+      end
+
+      def each(&block)
+        notes.each &block
+      end
+
       private
 
       def notes
@@ -28,7 +38,7 @@ class Nc
     attr_accessor :key, :value, :tags
 
     def initialize(key, value, *tags)
-      self.key, self.value, self.tags = key, value, tags
+      self.key, self.value, self.tags = remove_leading(key), remove_leading(value), tags
     end
 
     def each_field(&block)
@@ -45,6 +55,26 @@ class Nc
       offender = tags.find { |tag| !tag.respond_to?(:to_str) }
       raise ArgumentError, "QuickNote tags should respond to to_str, but `#{offender.inspect}` does not."
     end
+
+    def max_key_width
+      key.each_line.map(&:size).max
+    end
+
+    def remove_leading(string)
+      leading = string.scan(/^\s*/).min_by(&:size)
+      string = string.gsub /^#{leading}/, ''
+      string
+    end
   end
+end
+
+
+require 'nc/printer'
+Nc::Printer.register_format_string_for Nc::QuickNote::Collection do |collection|
+  "%-#{collection.max_key_width}s    %s\n"
+end
+
+Nc::Printer.register_fields_finder_for Nc::QuickNote do |note, &block|
+  Nc::LineYielder.new(note.key, note.value).each(&block)
 end
 

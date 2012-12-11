@@ -1,4 +1,4 @@
-%w[endpoint quick_note search]
+%w[endpoint quick_note search line_yielder]
   .each { |file| require "nc/#{file}" }
 
 class Nc
