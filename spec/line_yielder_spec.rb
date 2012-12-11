@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Nc::LineYielder do
+describe ILikeMustaches::LineYielder do
   it 'omits trailing newlines' do
     described_class.new("abc\n").to_a.should == [['abc']]
   end

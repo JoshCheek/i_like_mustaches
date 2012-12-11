@@ -1,4 +1,4 @@
-class Nc
+class ILikeMustaches
   class QuickNote
     class Collection
 
@@ -70,12 +70,12 @@ class Nc
 end
 
 
-require 'nc/printer'
-Nc::Printer.register_format_string_for Nc::QuickNote::Collection do |collection|
+require 'i_like_mustaches/printer'
+ILikeMustaches::Printer.register_format_string_for ILikeMustaches::QuickNote::Collection do |collection|
   "%-#{collection.max_key_width}s    %s\n"
 end
 
-Nc::Printer.register_fields_finder_for Nc::QuickNote do |note, &block|
-  Nc::LineYielder.new(note.key, note.value).each(&block)
+ILikeMustaches::Printer.register_fields_finder_for ILikeMustaches::QuickNote do |note, &block|
+  ILikeMustaches::LineYielder.new(note.key, note.value).each(&block)
 end
 

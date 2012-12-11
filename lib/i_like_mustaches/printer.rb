@@ -1,4 +1,4 @@
-class Nc
+class ILikeMustaches
   class Printer
     class << self
       def register_format_string_for(klass, &block)

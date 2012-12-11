@@ -9,14 +9,14 @@ describe 'searching for quick notes' do
   let(:nonmatching_value)      { 'badvalue' }
   let(:nonmatching_tags)       { ['badtags'] }
 
-  let(:key_nonmatcher)         { Nc::Search.new /badkey/,              true }
-  let(:key_matcher)            { Nc::Search.new /matchingkey/,         true }
-  let(:value_matcher)          { Nc::Search.new /matchingvalue/,       true }
-  let(:tag_matcher)            { Nc::Search.new /matchingtag/,         true }
-  let(:key_and_value_matcher)  { Nc::Search.new /matching(key|value)/, true }
+  let(:key_nonmatcher)         { ILikeMustaches::Search.new /badkey/,              true }
+  let(:key_matcher)            { ILikeMustaches::Search.new /matchingkey/,         true }
+  let(:value_matcher)          { ILikeMustaches::Search.new /matchingvalue/,       true }
+  let(:tag_matcher)            { ILikeMustaches::Search.new /matchingtag/,         true }
+  let(:key_and_value_matcher)  { ILikeMustaches::Search.new /matching(key|value)/, true }
 
   let :nc do
-    Nc.new do |nc|
+    ILikeMustaches.new do |nc|
       nc.quick_note matching_key,    nonmatching_value, *nonmatching_tags
       nc.quick_note nonmatching_key, matching_value,    *nonmatching_tags
       nc.quick_note nonmatching_key, nonmatching_value, *matching_tags
@@ -48,8 +48,8 @@ describe 'searching for quick notes' do
   end
 
   specify 'it works with positive and negative matchers' do
-    Nc.new { |nc| nc.quick_note('a', 'a').quick_note('a', 'b') }
-      .quick_notes_for([Nc::Search.new(/a/, true), Nc::Search.new(/b/, false)])
+    ILikeMustaches.new { |nc| nc.quick_note('a', 'a').quick_note('a', 'b') }
+      .quick_notes_for([ILikeMustaches::Search.new(/a/, true), ILikeMustaches::Search.new(/b/, false)])
       .map(&:key)
       .should == ['a']
   end

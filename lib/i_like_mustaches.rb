@@ -1,7 +1,7 @@
 %w[endpoint quick_note search line_yielder console]
-  .each { |file| require "nc/#{file}" }
+  .each { |file| require "i_like_mustaches/#{file}" }
 
-class Nc
+class ILikeMustaches
   def initialize(&constructor)
     self.quick_notes = QuickNote::Collection.new
     constructor && constructor.call(self)

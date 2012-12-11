@@ -1,4 +1,4 @@
-class Nc
+class ILikeMustaches
   class LineYielder
     include Enumerable
 

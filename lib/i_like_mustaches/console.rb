@@ -1,4 +1,4 @@
-class Nc
+class ILikeMustaches
   class Console
     def initialize(nc, argv, instream=$stdin, outstream=$stdout, errstream=$stderr)
       self.nc, self.argv, self.instream, self.outstream, self.errstream = nc, argv, instream, outstream, errstream
@@ -6,7 +6,7 @@ class Nc
 
     def call
       nc.each_collection_for searches do |collection|
-        Nc::Printer.new(collection, outstream).call
+        ILikeMustaches::Printer.new(collection, outstream).call
       end
     end
 

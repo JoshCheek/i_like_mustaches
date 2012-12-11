@@ -1,4 +1,4 @@
-class Nc
+class ILikeMustaches
   class Search
     attr_accessor :regex, :positive
 

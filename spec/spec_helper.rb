@@ -1,3 +1,3 @@
 require 'simplecov'
 SimpleCov.start
-require 'nc'
+require 'i_like_mustaches'

@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'stringio'
 
-describe Nc::Console do
+describe ILikeMustaches::Console do
   it 'interprets ~ as negation of a search' do
     search1, search2, *rest = described_class.new(nil, %w[a ~b]).searches
     rest.should be_empty
-    search1.should == Nc::Search.new('a', true)
-    search2.should == Nc::Search.new('b', false)
+    search1.should == ILikeMustaches::Search.new('a', true)
+    search2.should == ILikeMustaches::Search.new('b', false)
   end
 
   let(:instream)  { StringIO.new }
@@ -14,7 +14,7 @@ describe Nc::Console do
   let(:errstream) { StringIO.new }
 
   it 'pulls the searches from argv and prints the matching notes' do
-    nc = Nc.new do |nc|
+    nc = ILikeMustaches.new do |nc|
       nc.quick_note 'a', 'a'
       nc.quick_note 'a', 'b'
     end

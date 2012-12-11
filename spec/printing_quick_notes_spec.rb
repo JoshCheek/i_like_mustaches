@@ -3,7 +3,7 @@ require 'stringio'
 
 describe 'printing quick notes' do
   it 'lines everything up all pretty-like, even multilines, and strips leading whitespace' do
-    qns = Nc::QuickNote::Collection.new
+    qns = ILikeMustaches::QuickNote::Collection.new
     qns.add 'key', 'value'
     qns.add <<-KEY, 'and a value'
       This is
@@ -23,7 +23,7 @@ describe 'printing quick notes' do
     VALUE
 
     stdout  = StringIO.new
-    Nc::Printer.new(qns, stdout).call
+    ILikeMustaches::Printer.new(qns, stdout).call
 
     stdout.string.should ==
 <<OUT.gsub('|', '')
