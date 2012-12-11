@@ -1,4 +1,4 @@
-require 'nc'
+require 'spec_helper'
 require 'stringio'
 
 describe 'printing quick notes' do

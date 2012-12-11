@@ -1,4 +1,4 @@
-require 'nc'
+require 'spec_helper'
 
 describe 'searching for quick notes' do
   let(:matching_key)           { 'matchingkey' }
@@ -25,31 +25,31 @@ describe 'searching for quick notes' do
   end
 
   it 'can match the key' do
-    nc.quick_notes_for(key_matcher).map(&:key).should == [matching_key]
+    nc.quick_notes_for([key_matcher]).map(&:key).should == [matching_key]
   end
 
   it 'can match the value' do
-    nc.quick_notes_for(value_matcher).map(&:value).should == [matching_value]
+    nc.quick_notes_for([value_matcher]).map(&:value).should == [matching_value]
   end
 
   it 'can match any tag' do
-    nc.quick_notes_for(tag_matcher).map(&:tags).should == [matching_tags]
+    nc.quick_notes_for([tag_matcher]).map(&:tags).should == [matching_tags]
   end
 
   specify 'every matching result is returned' do
-    first, second, *rest = nc.quick_notes_for(key_and_value_matcher)
+    first, second, *rest = nc.quick_notes_for([key_and_value_matcher])
     rest.should be_empty
     first.key.should == matching_key
     second.value.should == matching_value
   end
 
   specify 'every matcher must match' do
-    nc.quick_notes_for(key_matcher, key_nonmatcher).should == []
+    nc.quick_notes_for([key_matcher, key_nonmatcher]).should be_empty
   end
 
   specify 'it works with positive and negative matchers' do
-    Nc.new { |nc| nc.quick_note('a', 'a').quick_note('b', 'b') }
-      .quick_notes_for(Nc::Search.new(/a/, true), Nc::Search.new(/b/, false))
+    Nc.new { |nc| nc.quick_note('a', 'a').quick_note('a', 'b') }
+      .quick_notes_for([Nc::Search.new(/a/, true), Nc::Search.new(/b/, false)])
       .map(&:key)
       .should == ['a']
   end

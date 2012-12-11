@@ -1,4 +1,4 @@
-%w[endpoint quick_note search line_yielder]
+%w[endpoint quick_note search line_yielder console]
   .each { |file| require "nc/#{file}" }
 
 class Nc
@@ -12,8 +12,12 @@ class Nc
     self
   end
 
-  def quick_notes_for(*searches)
-    quick_notes.filter *searches
+  def quick_notes_for(searches)
+    quick_notes.filter searches
+  end
+
+  def each_collection_for(searches)
+    yield quick_notes_for searches
   end
 
   private

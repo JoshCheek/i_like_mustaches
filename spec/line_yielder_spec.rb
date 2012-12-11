@@ -1,4 +1,4 @@
-require 'nc'
+require 'spec_helper'
 
 describe Nc::LineYielder do
   it 'omits trailing newlines' do

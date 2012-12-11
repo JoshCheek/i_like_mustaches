@@ -13,8 +13,8 @@ class Nc
       Regexp.new regex_or_string
     end
 
-    def match?(string)
-      (regex === string) == positive
+    def match?(strings)
+      positive == strings.any? { |string| regex === string }
     end
   end
 end

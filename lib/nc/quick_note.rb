@@ -1,18 +1,23 @@
 class Nc
   class QuickNote
     class Collection
+
+      def initialize(notes=[])
+        @notes = notes
+      end
+
       def add(*args)
         notes << QuickNote.new(*args)
         self
       end
 
-      # is this right?
-      def filter(*searches)
-        notes.select do |note|
+      def filter(searches)
+        filtered_notes = notes.select do |note|
           searches.all? do |search|
-            note.each_field.any? { |field| search.match? field }
+            search.match? note.all_fields
           end
         end
+        self.class.new filtered_notes
       end
 
       def max_key_width
@@ -21,15 +26,22 @@ class Nc
         end
       end
 
+
+      include Enumerable
+
       def each(&block)
         notes.each &block
       end
 
-      private
-
-      def notes
-        @notes ||= []
+      # doesn't it seem like Enumerable should add this?
+      def empty?
+        notes.empty?
       end
+
+      alias to_ary to_a
+
+      private
+      attr_reader :notes
     end
   end
 
@@ -41,12 +53,8 @@ class Nc
       self.key, self.value, self.tags = remove_leading(key), remove_leading(value), tags
     end
 
-    def each_field(&block)
-      return to_enum :each_field unless block
-      block.call key
-      block.call value
-      tags.each &block
-      self
+    def all_fields
+      [key, value, *tags]
     end
 
     def tags=(tags)
