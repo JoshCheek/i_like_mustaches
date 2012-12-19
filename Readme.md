@@ -13,12 +13,12 @@ I use it by making a bin in my path which I edit with new notes.
 
 
     i_like_mustches = ILikeMustaches.new do |mustache|
-      i_like_mustaches.quick_note "123123", "Prod account_id", "database", "db", "production"
-      i_like_mustaches.quick_note "ssh blah blah blah", "ssh into production server"
-      i_like_mustaches.quick_note "1.2.3.4", "dns"
+      mustache.quick_note "123123", "Prod account_id", "database", "db", "production"
+      mustache.quick_note "ssh blah blah blah", "ssh into production server"
+      mustache.quick_note "1.2.3.4", "dns"
     end
 
-    ILikeMustaches::Console.new(nc, ARGV, $stdin, $stdout, $stderr).call
+    ILikeMustaches::Console.new(i_like_mustches, ARGV, $stdin, $stdout, $stderr).call
 
 If that was saved in `~/bin/app`, then `app 1` would return the first and third note, and `app 1 ~dns` would return only the first one.
 
