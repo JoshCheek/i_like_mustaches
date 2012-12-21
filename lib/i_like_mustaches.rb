@@ -17,6 +17,7 @@ class ILikeMustaches
   end
 
   def each_collection_for(searches)
+    return to_enum :each_collection_for, searches unless block_given?
     yield quick_notes_for searches
   end
 

@@ -66,16 +66,10 @@ class ILikeMustaches
       string = string.gsub /^#{leading}/, ''
       string
     end
+
+    def to_sh
+      value
+    end
   end
-end
-
-
-require 'i_like_mustaches/printer'
-ILikeMustaches::Printer.register_format_string_for ILikeMustaches::QuickNote::Collection do |collection|
-  "%-#{collection.max_key_width}s    %s\n"
-end
-
-ILikeMustaches::Printer.register_fields_finder_for ILikeMustaches::QuickNote do |note, &block|
-  ILikeMustaches::LineYielder.new(note.key, note.value).each(&block)
 end
 
