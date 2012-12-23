@@ -30,6 +30,26 @@ describe ILikeMustaches::Console do
     outstream.string.should_not include 'b'
   end
 
+  it 'prints the help screen when given the -h or --help flags' do
+    %w[-h --help].each do |flag|
+      i_like_mustaches = ILikeMustaches.new do |mustache|
+        mustache.description = "something\nor\nother"
+        mustache.quick_note '-h', 'this should not match'
+        mustache.quick_note '--help', 'this should not match'
+      end
+      described_class.new(i_like_mustaches, [flag], instream, outstream, errstream).call.should == 0
+      instream.string.should be_empty
+      errstream.string.should be_empty
+      outstream.string.should_not include 'this should not match'
+      outstream.string.should include "  something\n  or\n  other"
+      outstream.string.should include 'Usage'
+      outstream.string.should include '-h'
+      outstream.string.should include '--help'
+      outstream.string.should include '-e'
+      outstream.string.should include '--execute'
+    end
+  end
+
   describe 'executing' do
     let(:i_like_mustaches) {
       ILikeMustaches.new do |mustache|

@@ -7,6 +7,11 @@ class ILikeMustaches
     constructor && constructor.call(self)
   end
 
+  attr_writer :description
+  def description
+    @description || ""
+  end
+
   def quick_note(*args)
     quick_notes.add(*args)
     self

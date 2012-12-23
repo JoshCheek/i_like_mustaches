@@ -13,6 +13,7 @@ I use it by making a bin in my path which I edit with new notes.
 
 
     i_like_mustches = ILikeMustaches.new do |mustache|
+      mustache.description = "Example application"
       mustache.quick_note "123123", "Prod account_id", "database", "db", "production"
       mustache.quick_note "ssh blah blah blah", "ssh into production server"
       mustache.quick_note "1.2.3.4", "dns"

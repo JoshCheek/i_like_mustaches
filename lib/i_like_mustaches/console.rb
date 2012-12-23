@@ -24,7 +24,10 @@ class ILikeMustaches
     end
 
     def call
-      if should_execute? && matches.count != 1
+      if print_help?
+        outstream.puts help_screen
+        0
+      elsif should_execute? && matches.count != 1
         message = (matches.count == 0 ? "Cannot execute as there are no matches." : "Cannot execute due to multiple matches")
         print_collections_to errstream
         errstream.puts message
@@ -52,6 +55,24 @@ class ILikeMustaches
       end
     end
 
+    def help_screen
+      <<-SCREEN.gsub /^        /, ''
+        Usage: #{File.basename $0} [options] [searches]
+
+          #{nc.description.gsub("\n", "\n  ")}
+
+          Searches:
+            Patterns for filtering what information to output.
+            Any search that begins with a "~" will be considered
+            a negative search (matches when that pattern is not found).
+
+          Options:
+            -e, --execute    When searches result in a single note,
+                                 That note's value will be executed as bash code.
+            -h, --help       This help screen
+      SCREEN
+    end
+
     private
 
     def matches
@@ -62,9 +83,11 @@ class ILikeMustaches
       @collections ||= nc.each_collection_for searches
     end
 
-    attr_accessor :nc, :args, :instream, :outstream, :errstream, :should_execute
+    attr_accessor :nc, :args, :instream, :outstream, :errstream
+    attr_accessor :should_execute, :print_help
 
     alias should_execute? should_execute
+    alias print_help?     print_help
 
     def parse(argv)
       args = []
@@ -73,6 +96,8 @@ class ILikeMustaches
         case arg
         when '-e', '--execute'
           self.should_execute = true
+        when '-h', '--help'
+          self.print_help = true
         else
           args << arg
         end
