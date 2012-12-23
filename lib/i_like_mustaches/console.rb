@@ -33,6 +33,7 @@ class ILikeMustaches
         execute matches.first.to_sh
       else
         print_collections_to outstream
+        0
       end
     end
 

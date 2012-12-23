@@ -22,7 +22,7 @@ describe ILikeMustaches::Console do
     end
 
     console = described_class.new(i_like_mustaches, %w[a ~b], instream, outstream, errstream)
-    console.call
+    console.call.should == 0
 
     instream.string.should be_empty
     errstream.string.should be_empty
