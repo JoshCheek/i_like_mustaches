@@ -20,6 +20,7 @@ class ILikeMustaches
 
     def initialize(nc, argv, instream=$stdin, outstream=$stdout, errstream=$stderr)
       self.nc, self.instream, self.outstream, self.errstream = nc, instream, outstream, errstream
+      self.should_colour = true
       self.args = parse argv
     end
 
@@ -41,7 +42,7 @@ class ILikeMustaches
     end
 
     def print_collections_to(stream)
-      collections.each { |match| ILikeMustaches::Printer.new(match, stream).call }
+      collections.each { |match| ILikeMustaches::Printer.new(match, stream, colour: colour?).call }
     end
 
     def searches
@@ -84,10 +85,11 @@ class ILikeMustaches
     end
 
     attr_accessor :nc, :args, :instream, :outstream, :errstream
-    attr_accessor :should_execute, :print_help
+    attr_accessor :should_execute, :print_help, :should_colour
 
     alias should_execute? should_execute
     alias print_help?     print_help
+    alias colour?         should_colour
 
     def parse(argv)
       args = []
@@ -98,6 +100,8 @@ class ILikeMustaches
           self.should_execute = true
         when '-h', '--help'
           self.print_help = true
+        when '-C', '--no-colour'
+          self.should_colour = false
         else
           args << arg
         end

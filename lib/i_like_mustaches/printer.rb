@@ -28,21 +28,40 @@ class ILikeMustaches
       end
     end
 
-    def initialize(collection, stdout)
-      self.collection = collection
-      self.stdout     = stdout
+    def initialize(collection, stdout, options={})
+      self.collection    = collection
+      self.stdout        = stdout
+      self.should_colour = options.fetch :colour, false
     end
 
     def call
       collection.each do |element|
         self.class.each_fields_for element do |fields|
-          stdout.printf self.class.format_string_for(collection), *fields
+          colour do
+            stdout.printf self.class.format_string_for(collection), *fields
+          end
         end
+        advance_colour
       end
     end
 
     private
 
-    attr_accessor :collection, :stdout
+    attr_accessor :collection, :stdout, :should_colour
+
+    def colour(&block)
+      return block.call unless should_colour
+      stdout.write colours.first
+      block.call
+      stdout.write "\e[0m"
+    end
+
+    def colours
+      @colours ||= ["\e[37m", "\e[32m"]
+    end
+
+    def advance_colour
+      colours.rotate!
+    end
   end
 end

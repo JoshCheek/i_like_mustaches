@@ -50,6 +50,26 @@ describe ILikeMustaches::Console do
     end
   end
 
+  describe 'colouring output' do
+    let(:i_like_mustaches) { ILikeMustaches.new }
+
+    it 'colours every other match by default' do
+      console = described_class.new(i_like_mustaches, [], instream, outstream, errstream)
+      ILikeMustaches::Printer
+        .should_receive(:new)
+        .with(anything, anything, colour: true)
+        .and_return(mock('Printer').as_null_object)
+      console.call
+    end
+
+    it 'does not colour when given -C or --no-colour' do
+      %w[-C --no-colour].each do |flag|
+        described_class.new(i_like_mustaches, [flag, 'a'], instream, outstream, errstream).call
+        outstream.should_not include "\e["
+      end
+    end
+  end
+
   describe 'executing' do
     let(:i_like_mustaches) {
       ILikeMustaches.new do |mustache|
