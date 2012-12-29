@@ -23,7 +23,7 @@ class ILikeMustaches
     def initialize(mustache, wiring=DefaultWiring.new, &block)
       self.mustache     = mustache
       self.wiring       = wiring
-      self.config       = wiring.config
+      self.config       = wiring.config.console
       self.raw_searches = parse wiring.args
     end
 

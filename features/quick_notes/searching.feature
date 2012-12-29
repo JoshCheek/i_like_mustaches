@@ -6,8 +6,10 @@ Feature: Searching
     Given the config file:
     """
       ILikeMustaches.configure do |config|
-        config.should_colour = false
-        config.quick_note_separator = "|"
+        config.console do |console|
+          console.should_colour = false
+          console.quick_note_separator = "|"
+        end
       end
     """
     And the mustache:

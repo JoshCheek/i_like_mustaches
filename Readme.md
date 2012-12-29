@@ -42,8 +42,10 @@ By default, ILikeMustaches will look in `~/.i_like_mustaches` for a configuratio
 
 ```ruby
 ILikeMustaches.configure do |config|
-  config.should_colour        = true
-  config.quick_note_separator = "    "
+  config.console do |console|
+    console.should_colour        = true
+    console.quick_note_separator = "    "
+  end
 end
 ```
 

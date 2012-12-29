@@ -7,7 +7,7 @@ describe 'when printing' do
 
 
     it 'can be configured on or off' do
-      config = ILikeMustaches::Configuration.new
+      config = ILikeMustaches::Configuration.new.console
 
       # on
       stdout = StringIO.new
@@ -52,7 +52,7 @@ describe 'when printing' do
       VALUE
 
       stdout = StringIO.new
-      config = ILikeMustaches::Configuration.new { |c| c.quick_note_separator = "--" }
+      config = ILikeMustaches::Configuration.new.console { |c| c.quick_note_separator = "--" }
       ILikeMustaches::Printer.new(qns, stdout, config).call
 
       # pipes to preserve whitespace at end of the line

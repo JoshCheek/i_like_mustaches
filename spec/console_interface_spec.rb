@@ -61,17 +61,17 @@ describe ILikeMustaches::Console do
 
     it 'sets configuration.should_colour to true when given -c or --colour' do
       %w[-c --colour].each do |flag|
-        config.should_colour = false
+        config.console.should_colour = false
         described_class.new(i_like_mustaches, wiring_for(argv: [flag])).call
-        config.should_colour.should == true
+        config.console.should_colour.should == true
       end
     end
 
     it 'sets configuration.should_colour to false when given -C or --no-colour' do
       %w[-C --no-colour].each do |flag|
-        config.should_colour = true
+        config.console.should_colour = true
         described_class.new(i_like_mustaches, wiring_for(argv: [flag])).call
-        config.should_colour.should == false
+        config.console.should_colour.should == false
       end
     end
   end

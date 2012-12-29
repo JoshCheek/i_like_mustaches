@@ -17,15 +17,27 @@ end
 
 class ILikeMustaches
   class Configuration
-
-    # these options are all about the command line, perhaps namespace them?
-    attr_accessor :should_colour, :quick_note_separator
-    alias should_colour? should_colour
-
     def initialize
-      self.should_colour        = false
-      self.quick_note_separator = '    '
       yield self if block_given?
+    end
+
+    def console(&block)
+      @console ||= Console.new(&block)
+    end
+  end
+end
+
+class ILikeMustaches
+  class Configuration
+    class Console
+      attr_accessor :should_colour, :quick_note_separator
+      alias should_colour? should_colour
+
+      def initialize
+        self.should_colour        = false
+        self.quick_note_separator = '    '
+        yield self if block_given?
+      end
     end
   end
 end
