@@ -60,15 +60,34 @@ module CommandLineHelpers
     end
   end
 
-  def invoke_mustache_file_with(command)
-    in_proving_grounds { Invocation.new *Open3.capture3("ruby -I #{path_to_lib} #{mustache_filename} #{command}") }
+  def invoke_mustache_file_with(args)
+    in_proving_grounds do
+      command = "ruby -I #{path_to_lib} #{mustache_filename} #{args}"
+      Invocation.new *Open3.capture3(command)
+    end
   end
 
   extend self
 end
 
+class Recluse < BasicObject
+  def initialize(message)
+    @message = message
+  end
+
+  def inspect
+    "Recluse.new(#{@message.inspect})"
+  end
+
+  def method_missing(name, *)
+    ::Kernel.raise "Tried to invoke the method `#{name}`. #@message"
+  end
+end
+
+CommandLineHelpers.make_proving_grounds
+
 Before do
-  CommandLineHelpers.make_proving_grounds
+  @last_invocation = Recluse.new "Should have executed something on the command line before trying to access methods on the @last_invocation"
   CommandLineHelpers.set_proving_grounds_as_home
   CommandLineHelpers.kill_config_file
   CommandLineHelpers.kill_mustache_file
