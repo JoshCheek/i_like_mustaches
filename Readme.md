@@ -27,7 +27,7 @@ i_like_mustches = ILikeMustaches.new do |mustache|
 end
 
 # default wiring uses ARGV, $stdout, $stderr, and config file from ~/.i_like_mustches
-ILikeMustaches::Console.new(i_like_mustches).call
+exit ILikeMustaches::Console.new(i_like_mustches).call
 ```
 
 If that was saved in `~/bin/app`, then `app 1` would return the first and third note because they both have "1" in them, and `app 1 ~dns`

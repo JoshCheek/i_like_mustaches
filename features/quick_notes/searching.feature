@@ -18,7 +18,7 @@ Feature: Searching
         m.quick_note 'key2', 'value2', 'tag2'
         m.quick_note 'key3', 'value3', 'tag3'
       end
-      ILikeMustaches::Console.new(mustache).call
+      exit ILikeMustaches::Console.new(mustache).call
     """
 
   Scenario: Matching keys
