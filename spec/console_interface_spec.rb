@@ -5,7 +5,7 @@ describe ILikeMustaches::Console do
   described_class.execute_with { |command| 1 }
 
   it 'interprets ~ as negation of a search' do
-    search1, search2, *rest = described_class.new(nil, %w[a ~b]).searches
+    search1, search2, *rest = described_class.new(nil, wiring_for(argv: %w[a ~b])).searches
     rest.should be_empty
     search1.should == ILikeMustaches::Search.new('a', true)
     search2.should == ILikeMustaches::Search.new('b', false)
@@ -14,6 +14,12 @@ describe ILikeMustaches::Console do
   let(:instream)  { StringIO.new }
   let(:outstream) { StringIO.new }
   let(:errstream) { StringIO.new }
+  let(:config)    { ILikeMustaches::Configuration.new }
+
+  def wiring_for(options)
+    options = {argv: [], instream: instream, outstream: outstream, errstream: errstream}.merge(options)
+    ILikeMustaches::Console::Wiring.new options[:argv], options[:instream], options[:outstream], options[:errstream], config
+  end
 
   it 'pulls the searches from argv and prints the matching notes' do
     i_like_mustaches = ILikeMustaches.new do |mustache|
@@ -21,7 +27,7 @@ describe ILikeMustaches::Console do
       mustache.quick_note 'a', 'b'
     end
 
-    console = described_class.new(i_like_mustaches, %w[a ~b], instream, outstream, errstream)
+    console = described_class.new(i_like_mustaches, wiring_for(argv: %w[a ~b]))
     console.call.should == 0
 
     instream.string.should be_empty
@@ -37,7 +43,7 @@ describe ILikeMustaches::Console do
         mustache.quick_note '-h', 'this should not match'
         mustache.quick_note '--help', 'this should not match'
       end
-      described_class.new(i_like_mustaches, [flag], instream, outstream, errstream).call.should == 0
+      described_class.new(i_like_mustaches, wiring_for(argv: [flag])).call.should == 0
       instream.string.should be_empty
       errstream.string.should be_empty
       outstream.string.should_not include 'this should not match'
@@ -53,19 +59,19 @@ describe ILikeMustaches::Console do
   describe 'colouring output' do
     let(:i_like_mustaches) { ILikeMustaches.new }
 
-    it 'colours every other match by default' do
-      console = described_class.new(i_like_mustaches, [], instream, outstream, errstream)
-      ILikeMustaches::Printer
-        .should_receive(:new)
-        .with(anything, anything, colour: true)
-        .and_return(mock('Printer').as_null_object)
-      console.call
+    it 'sets configuration.should_colour to true when given -c or --colour' do
+      %w[-c --colour].each do |flag|
+        config.should_colour = false
+        described_class.new(i_like_mustaches, wiring_for(argv: [flag])).call
+        config.should_colour.should == true
+      end
     end
 
-    it 'does not colour when given -C or --no-colour' do
+    it 'sets configuration.should_colour to false when given -C or --no-colour' do
       %w[-C --no-colour].each do |flag|
-        described_class.new(i_like_mustaches, [flag, 'a'], instream, outstream, errstream).call
-        outstream.should_not include "\e["
+        config.should_colour = true
+        described_class.new(i_like_mustaches, wiring_for(argv: [flag])).call
+        config.should_colour.should == false
       end
     end
   end
@@ -79,12 +85,8 @@ describe ILikeMustaches::Console do
       end
     }
 
-    let(:instream)  { StringIO.new }
-    let(:outstream) { StringIO.new }
-    let(:errstream) { StringIO.new }
-
     def run(*argv)
-      ILikeMustaches::Console.new(i_like_mustaches, argv, instream, outstream, errstream).call
+      ILikeMustaches::Console.new(i_like_mustaches, wiring_for(argv: argv)).call
     end
 
     it 'errors if multiple notes are matched' do

@@ -6,10 +6,13 @@ describe 'when printing' do
     let(:qns) { ILikeMustaches::QuickNote::Collection.new.add("a", "b\nc").add("a", "d").add("e\nf", "a") }
 
 
-    it 'can be turned on or off' do
+    it 'can be configured on or off' do
+      config = ILikeMustaches::Configuration.new
+
       # on
-      stdout  = StringIO.new
-      ILikeMustaches::Printer.new(qns, stdout, colour: true).call
+      stdout = StringIO.new
+      config.should_colour = true
+      ILikeMustaches::Printer.new(qns, stdout, config).call
       coloureds = stdout.string.scan /\e\[37m.*?\e\[0m/m
       %w[b c e f].each do |char|
         coloureds.find { |coloured| coloured =~ /#{char}/ }.should_not be_nil, "Expected #{coloureds.inspect} to have a line for #{char}"
@@ -20,20 +23,15 @@ describe 'when printing' do
       coloureds.first.should_not include "b"
 
       # off
+      config.should_colour = false
       stdout = StringIO.new
-      ILikeMustaches::Printer.new(qns, stdout, colour: false).call
-      stdout.string.should_not include "\e["
-    end
-
-    it 'is off by default' do
-      stdout = StringIO.new
-      ILikeMustaches::Printer.new(qns, stdout).call
+      ILikeMustaches::Printer.new(qns, stdout, config).call
       stdout.string.should_not include "\e["
     end
   end
 
   context 'quicknotes' do
-    it 'lines everything up all pretty-like, even multilines, and strips leading whitespace' do
+    it 'lines everything up all pretty-like, even multilines, and strips leading whitespace, separationg keys/values based on configuration' do
       qns = ILikeMustaches::QuickNote::Collection.new
       qns.add 'key', 'value'
       qns.add <<-KEY, 'and a value'
@@ -53,20 +51,21 @@ describe 'when printing' do
         value
       VALUE
 
-      stdout  = StringIO.new
-      ILikeMustaches::Printer.new(qns, stdout).call
+      stdout = StringIO.new
+      config = ILikeMustaches::Configuration.new { |c| c.quick_note_separator = "--" }
+      ILikeMustaches::Printer.new(qns, stdout, config).call
 
       # pipes to preserve whitespace at end of the line
       stdout.string.should ==
-<<OUT.gsub('|', '')
-key                   value|
-This is               and a value|
-  some key            |
-this is a long key      And a|
-                          multiline|
-                      value|
-multiline             multiline|
-key                   value|
+<<OUT
+key               --value
+This is           --and a value
+  some key        --
+this is a long key--  And a
+                  --    multiline
+                  --value
+multiline         --multiline
+key               --value
 OUT
     end
 

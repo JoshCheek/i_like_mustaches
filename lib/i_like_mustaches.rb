@@ -1,4 +1,4 @@
-%w[endpoint quick_note search line_yielder console]
+%w[endpoint quick_note search line_yielder console configuration]
   .each { |file| require "i_like_mustaches/#{file}" }
 
 class ILikeMustaches

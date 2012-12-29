@@ -1,14 +1,15 @@
 require 'i_like_mustaches/printer'
-ILikeMustaches::Printer.register_format_string_for ILikeMustaches::QuickNote::Collection do |collection|
-  "%-#{collection.max_key_width}s    %s\n"
-end
-
-ILikeMustaches::Printer.register_fields_finder_for ILikeMustaches::QuickNote do |note, &block|
-  ILikeMustaches::LineYielder.new(note.key, note.value).each(&block)
-end
 
 class ILikeMustaches
   class Console
+    Wiring = Struct.new :args, :instream, :outstream, :errstream, :config
+
+    class DefaultWiring < Wiring
+      def initialize
+        super ARGV, $stdin, $stdout, $stderr, ILikeMustaches.default_config
+      end
+    end
+
     def self.execute_with(&execute_block)
       define_method :execute, &execute_block
     end
@@ -18,35 +19,37 @@ class ILikeMustaches
       $?
     end
 
-    def initialize(nc, argv, instream=$stdin, outstream=$stdout, errstream=$stderr)
-      self.nc, self.instream, self.outstream, self.errstream = nc, instream, outstream, errstream
-      self.should_colour = true
-      self.args = parse argv
+    # uhm, nc is a fucking stupid name
+    def initialize(nc, wiring=DefaultWiring.new, &block)
+      self.nc           = nc
+      self.wiring       = wiring
+      self.config       = wiring.config
+      self.raw_searches = parse wiring.args
     end
 
     def call
       if print_help?
-        outstream.puts help_screen
+        wiring.outstream.puts help_screen
         0
       elsif should_execute? && matches.count != 1
         message = (matches.count == 0 ? "Cannot execute as there are no matches." : "Cannot execute due to multiple matches")
-        print_collections_to errstream
-        errstream.puts message
+        print_collections_to wiring.errstream
+        wiring.errstream.puts message
         1
       elsif should_execute?
         execute matches.first.to_sh
       else
-        print_collections_to outstream
+        print_collections_to wiring.outstream
         0
       end
     end
 
     def print_collections_to(stream)
-      collections.each { |match| ILikeMustaches::Printer.new(match, stream, colour: colour?).call }
+      collections.each { |match| ILikeMustaches::Printer.new(match, stream, config).call }
     end
 
     def searches
-      @searches ||= args.map do |arg|
+      @searches ||= raw_searches.map do |arg|
         positive = true
         if arg.start_with? '~'
           positive = false
@@ -68,6 +71,8 @@ class ILikeMustaches
             a negative search (matches when that pattern is not found).
 
           Options:
+            -c, --colour     Turn on coloured output
+            -C, --no-colour  Turn off coloured output
             -e, --execute    When searches result in a single note,
                                  That note's value will be executed as bash code.
             -h, --help       This help screen
@@ -84,29 +89,30 @@ class ILikeMustaches
       @collections ||= nc.each_collection_for searches
     end
 
-    attr_accessor :nc, :args, :instream, :outstream, :errstream
-    attr_accessor :should_execute, :print_help, :should_colour
+    attr_accessor :nc, :wiring, :config, :raw_searches
+    attr_accessor :should_execute, :print_help
 
     alias should_execute? should_execute
     alias print_help?     print_help
-    alias colour?         should_colour
 
-    def parse(argv)
-      args = []
-      until argv.empty?
-        arg = argv.shift
+    def parse(args)
+      raw_searches = []
+      until args.empty?
+        arg = args.shift
         case arg
         when '-e', '--execute'
           self.should_execute = true
         when '-h', '--help'
           self.print_help = true
+        when '-c', '--colour'
+          config.should_colour = true
         when '-C', '--no-colour'
-          self.should_colour = false
+          config.should_colour = false
         else
-          args << arg
+          raw_searches << arg
         end
       end
-      args
+      raw_searches
     end
   end
 end

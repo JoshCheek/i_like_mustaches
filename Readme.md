@@ -19,10 +19,22 @@ I use it by making a bin in my path which I edit with new notes.
       mustache.quick_note "1.2.3.4", "dns"
     end
 
-    ILikeMustaches::Console.new(i_like_mustches, ARGV, $stdin, $stdout, $stderr).call
+    ILikeMustaches::Console.new(i_like_mustches).call
 
 If that was saved in `~/bin/app`, then `app 1` would return the first and third note, and `app 1 ~dns` would return only the first one.
 
+Configuration
+=============
+
+Check `lib/i_like_mustches/configuration.rb` to see all options.
+
+By default, ILikeMustaches will look in `~/.i_like_mustches` for a configuration file. Here is mine:
+
+    $ cat ~/.i_like_mustaches
+    ILikeMustaches.configure do |config|
+      config.should_colour        = true
+      config.quick_note_separator = "    "
+    end
 
 License
 =======
