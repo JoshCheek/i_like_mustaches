@@ -3,6 +3,8 @@ require 'open3'
 
 module CommandLineHelpers
 
+  extend self
+
   Invocation = Struct.new :stdout, :stderr, :status do
     def exitstatus
       status.exitstatus
@@ -67,6 +69,4 @@ module CommandLineHelpers
       Invocation.new *Open3.capture3(command)
     end
   end
-
-  extend self
 end
