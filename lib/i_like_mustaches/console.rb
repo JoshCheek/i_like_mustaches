@@ -10,6 +10,7 @@ class ILikeMustaches
       end
     end
 
+    # execution is maybe not a console thing, and should probably be moved down into the ILikeMustaches lib
     def self.execute_with(&execute_block)
       define_method :execute, &execute_block
     end
@@ -19,9 +20,8 @@ class ILikeMustaches
       $?
     end
 
-    # uhm, nc is a fucking stupid name
-    def initialize(nc, wiring=DefaultWiring.new, &block)
-      self.nc           = nc
+    def initialize(mustache, wiring=DefaultWiring.new, &block)
+      self.mustache     = mustache
       self.wiring       = wiring
       self.config       = wiring.config
       self.raw_searches = parse wiring.args
@@ -63,7 +63,7 @@ class ILikeMustaches
       <<-SCREEN.gsub /^        /, ''
         Usage: #{File.basename $0} [options] [searches]
 
-          #{nc.description.gsub("\n", "\n  ")}
+          #{mustache.description.gsub("\n", "\n  ")}
 
           Searches:
             Patterns for filtering what information to output.
@@ -86,10 +86,10 @@ class ILikeMustaches
     end
 
     def collections
-      @collections ||= nc.each_collection_for searches
+      @collections ||= mustache.each_collection_for searches
     end
 
-    attr_accessor :nc, :wiring, :config, :raw_searches
+    attr_accessor :mustache, :wiring, :config, :raw_searches
     attr_accessor :should_execute, :print_help
 
     alias should_execute? should_execute
