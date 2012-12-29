@@ -40,7 +40,6 @@ Check [`lib/i_like_mustches/configuration.rb`](https://github.com/JoshCheek/i_li
 
 By default, ILikeMustaches will look in `~/.i_like_mustaches` for a configuration file. Here is mine:
 
-`$ cat ~/.i_like_mustaches`
 ```ruby
 ILikeMustaches.configure do |config|
   config.should_colour        = true
